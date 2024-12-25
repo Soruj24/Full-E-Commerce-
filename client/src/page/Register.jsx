@@ -5,9 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAddUserMutation } from "../../app/services/userApi";
 
-// Define Zod Schema
 const schema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters long."),
     email: z.string().email("Invalid email address."),
@@ -15,7 +13,8 @@ const schema = z.object({
         .string()
         .min(6, "Password must be at least 6 characters long.")
         .regex(/[A-Z]/, "Password must include at least one uppercase letter.")
-        .regex(/[0-9]/, "Password must include at least one number."),
+        .regex(/[0-9]/, "Password must include at least one number.")
+        .regex(/[@$!%*?&#]/, "Password must include at least one special character."),
     phone: z.string().regex(/^\d{11}$/, "Phone number must be 11 digits."),
     address: z.string().min(5, "Address must be at least 5 characters long."),
     image: z.any().optional(),
@@ -25,7 +24,6 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [addUser] = useAddUserMutation();
     const navigate = useNavigate()
 
     const {
@@ -46,17 +44,16 @@ const Register = () => {
     };
 
     const onSubmit = async (data) => {
-        setIsLoading(true); // Start loading
-        try {
-            await addUser(data).unwrap(); // Call API
-            toast.success("Registration successful!");
-            navigate('/login')
-        } catch (error) {
-            console.log(error)
-            toast.error(error.data.message);
-        } finally {
-            setIsLoading(false); // Stop loading
-        }
+        // setIsLoading(true);
+        // try {
+        //     toast.success("Registration successful!");
+        //     navigate('/login')
+        // } catch (error) {
+        //     console.log(error)
+        //     toast.error(error?.data?.message);
+        // } finally {
+        //     setIsLoading(false); // Stop loading
+        // }
     };
 
     return (
@@ -120,6 +117,7 @@ const Register = () => {
                 </div>
 
                 {/* Password */}
+                {/* Password */}
                 <div className="mb-4 relative">
                     <label className="block text-gray-700 font-medium mb-1">Password</label>
                     <input
@@ -140,32 +138,8 @@ const Register = () => {
                     )}
                 </div>
 
-                {/* Phone */}
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-1">Phone</label>
-                    <input
-                        type="tel"
-                        {...register("phone")}
-                        placeholder="Enter your phone number"
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                    {errors.phone && (
-                        <p className="text-red-500 text-sm">{errors.phone.message}</p>
-                    )}
-                </div>
 
-                {/* Address */}
-                <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-1">Address</label>
-                    <textarea
-                        {...register("address")}
-                        placeholder="Enter your address"
-                        className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                    {errors.address && (
-                        <p className="text-red-500 text-sm">{errors.address.message}</p>
-                    )}
-                </div>
+               
 
                 {/* Submit Button */}
                 <button
